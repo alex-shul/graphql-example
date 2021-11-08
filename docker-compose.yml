@@ -1,0 +1,30 @@
+version: "3"
+
+networks:
+  test-net:
+
+services:
+  redis:
+    container_name: test-redis
+    image: redis
+    restart: always
+    networks:
+      - test-net
+    volumes:
+      - ./data/redis:/test-data
+    ports:
+      - 127.0.0.1:6377:6379
+
+  postgres:
+    container_name: test-postgres
+    image: postgres
+    restart: always
+    networks:
+      - test-net
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    volumes:
+      - ./data/pg:/var/lib/postgresql/test-data
+    ports:
+      - 127.0.0.1:5430:5432

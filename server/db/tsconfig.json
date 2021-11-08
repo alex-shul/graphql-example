@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+      "outDir": "../dist/db",
+      "baseUrl": "../",
+      "module": "commonjs"
+  },
+  "include": [
+      "../db/**/*"
+  ]
+}

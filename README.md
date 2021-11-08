@@ -1,2 +1,2 @@
 # graphql-example
-Example of building agraphql api server with typeorm &amp; type-graphql
+Example of building a GraphQL api server with typeorm &amp; type-graphql
