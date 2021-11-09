@@ -1,5 +1,7 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
+import { Client } from '../../client/models/client';
+import { Book } from './book';
 
 @Entity('usage')
 @ObjectType()
@@ -8,19 +10,22 @@ export class BookUsage extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => Number)
-  @Column({ name: 'book_id' })
-  bookId: number;
+  @Field(() => Book)
+  @JoinColumn({ name: 'book_id' })
+  @ManyToOne(() => Book)
+  book: Book;
 
-  @Field(() => Number)
-  @Column({ name: 'user_id' })
-  userId: number;
+  @Column({ name: 'client_id' })
+  clientId: number;
+
+  @Field(() => Client)
+  client: Client;
 
   @Field(() => Date)
   @Column({ name: 'start_date' })
   startDate: Date;
 
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   @Column({ name: 'end_date', nullable: true })
   endDate?: Date;
 }

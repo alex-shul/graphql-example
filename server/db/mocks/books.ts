@@ -1,5 +1,5 @@
 import { BookUsage } from './../../src/area/book/models/usage';
-import { User } from '../../src/area/user/models/user';
+import { Client } from '../../src/area/client/models/client';
 import { Book } from '../../src/area/book/models/book';
 import { dbWrapper } from '../../src/shared/utils/dbWrapper';
 import booksMockData from './books.json';
@@ -27,16 +27,16 @@ const getRandomPeriod = (fromPeriodTS: number): number => {
 };
 
 export const createBookUsages = async () => {
-  const usersEM = dbWrapper.getEntityManager('users');
+  const clientsEM = dbWrapper.getEntityManager('clients');
   const booksEM = dbWrapper.getEntityManager('books');
 
   const books = await booksEM.find(Book);
-  const users = await usersEM.find(User);
+  const clients = await clientsEM.find(Client);
 
   const timeEndTS = Date.now();
   const timeStartTS = timeEndTS - timePeriodTS;
 
-  for (const user of users) {
+  for (const client of clients) {
     let hasBookInProgress = false;
 
     for (const book of books) {
@@ -50,8 +50,8 @@ export const createBookUsages = async () => {
       const startReadingTS = timeStartTS + getRandomPeriod(timePeriodTS - readingPeriodTS);
 
       const bookUsage = new BookUsage();
-      bookUsage.bookId = book.id;
-      bookUsage.userId = user.id;
+      bookUsage.book = book;
+      bookUsage.clientId = client.id;
       bookUsage.startDate = new Date(startReadingTS);
 
       if (!hasBookInProgress && randomBoolean()) {

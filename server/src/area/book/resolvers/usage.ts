@@ -1,20 +1,20 @@
 import { IsNull } from 'typeorm';
 import { dbWrapper } from '../../../shared/utils/dbWrapper';
-import { Arg, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Resolver } from 'type-graphql';
 import { Book } from '../models/book';
 import { BookUsage } from '../models/usage';
-import { User } from '../../user/models/user';
+import { Client } from '../../client/models/client';
 
 @Resolver()
-export class BookUsageCRUDResolver {
-  @Query(() => BookUsage)
-  async giveBookToUser(@Arg('userId') userId: number, @Arg('bookId') bookId: number) {
-    const usersEM = dbWrapper.getEntityManager('users');
+export class BookUsageResolver {
+  @Mutation(() => BookUsage)
+  async giveBookToUser(@Arg('clientId') clientId: number, @Arg('bookId') bookId: number) {
+    const clientsEM = dbWrapper.getEntityManager('clients');
     const booksEM = dbWrapper.getEntityManager('books');
 
-    const user = await usersEM.findOne(User, { id: userId });
+    const client = await clientsEM.findOne(Client, { id: clientId });
 
-    if (!user) {
+    if (!client) {
       throw new Error('User not found!');
     }
 
@@ -25,7 +25,7 @@ export class BookUsageCRUDResolver {
     }
 
     const existedBookUsage = await booksEM.findOne(BookUsage, {
-      bookId,
+      book: { id: bookId },
       endDate: IsNull(),
     });
 
@@ -34,21 +34,21 @@ export class BookUsageCRUDResolver {
     }
 
     const newBookUsage = new BookUsage();
-    newBookUsage.userId = userId;
-    newBookUsage.bookId = bookId;
+    newBookUsage.clientId = client.id;
+    newBookUsage.book = book;
     newBookUsage.startDate = new Date();
 
     return booksEM.save(newBookUsage);
   }
 
-  @Query(() => BookUsage)
-  async takeBookFromUser(@Arg('userId') userId: number, @Arg('bookId') bookId: number) {
-    const usersEM = dbWrapper.getEntityManager('users');
+  @Mutation(() => BookUsage)
+  async takeBookFromUser(@Arg('clientId') clientId: number, @Arg('bookId') bookId: number) {
+    const clientsEM = dbWrapper.getEntityManager('clients');
     const booksEM = dbWrapper.getEntityManager('books');
 
-    const user = await usersEM.findOne(User, { id: userId });
+    const client = await clientsEM.findOne(Client, { id: clientId });
 
-    if (!user) {
+    if (!client) {
       throw new Error('User not found!');
     }
 
@@ -59,13 +59,13 @@ export class BookUsageCRUDResolver {
     }
 
     const bookUsage = await booksEM.findOne(BookUsage, {
-      userId: user.id,
-      bookId: book.id,
+      clientId: client.id,
+      book: { id: book.id },
       endDate: IsNull()
     });
 
     if (!bookUsage) {
-      throw new Error('Book is not given to a user or already taken from him!');
+      throw new Error('Book is not given to a client or already taken from him!');
     }
 
     bookUsage.endDate = new Date();

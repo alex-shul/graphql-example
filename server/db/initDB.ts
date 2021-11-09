@@ -6,7 +6,7 @@ import pgPromise from 'pg-promise';
 import { AppState } from '../common/appState';
 import { logger } from '../common/logger';
 import { createBookUsages, createBooks } from './mocks/books';
-import { createUsers } from './mocks/users';
+import { createUsers } from './mocks/clients';
 
 const createDB = async (): Promise<void> => {
   const pgp = pgPromise({});
@@ -64,18 +64,19 @@ if (!process.env.dbHost) {
 const initDB = async () => {
   await createDB();
 
-  logger.message('Initialize users ...');
-  await dbWrapper.initialize('users', true, true);
+  await dbWrapper.initialize('clients', true, true);
+  await dbWrapper.initialize('books', true, true);
+
+  logger.message('Initialize clients ...');
   await createUsers();
-  logger.message('Initialize user complete');
+  logger.message('Initialize clients complete');
 
   logger.message('Initialize books ...');
-  await dbWrapper.initialize('books', true, true);
   await createBooks();
   await createBookUsages();
-  logger.message('Initialize book complete');
+  logger.message('Initialize books complete');
 
-  await dbWrapper.close('users');
+  await dbWrapper.close('clients');
   await dbWrapper.close('books');
 };
 

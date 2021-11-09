@@ -1,10 +1,9 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Field, ID, InputType, ObjectType } from 'type-graphql';
-import { User } from '../../user/models/user';
+import { Field, ID, ObjectType } from 'type-graphql';
+import { BookUsage } from './usage';
 
 @Entity()
 @ObjectType()
-@InputType('BookUpdateInput')
 export class Book extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
@@ -30,9 +29,9 @@ export class Book extends BaseEntity {
   @Column()
   descriptionFull: string;
 
-  @Field(() => User, { nullable: true })
-  usedBy?: User;
+  @Field(() => BookUsage, { nullable: true })
+  currentUsage?: BookUsage;
 
-  @Field(() => [User], { nullable: true })
-  completedBy: User[];
+  @Field(() => [BookUsage])
+  completedUsages: BookUsage[];
 }

@@ -5,7 +5,7 @@ import { UpdateBookInput } from '../inputs/updateBookInput';
 import { Book } from '../models/book';
 
 @Resolver()
-export class BookCRUDResolver {
+export class BookResolver {
   @Query(() => [Book])
   books() {
     const em = dbWrapper.getEntityManager('books');

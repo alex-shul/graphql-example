@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import 'express-async-errors';
-import { UserResolver } from './area/user/resolvers/userFields';
 import * as dotenv from 'dotenv';
 import compression from 'compression';
 import express from 'express';
@@ -19,10 +18,13 @@ import { defaultMaxBodySizeKb, maxQueryComplexity } from './shared/constants';
 import { dbWrapper } from './shared/utils/dbWrapper';
 import { buildSchema } from 'type-graphql';
 import createComplexityRule, { fieldExtensionsEstimator, simpleEstimator } from 'graphql-query-complexity';
-import { BookResolver } from './area/book/resolvers/bookFields';
-import { UserAuthResolver } from './area/user/resolvers/userAuth';
-import { UserCrudResolver } from './area/user/resolvers/user';
-import { BookCRUDResolver } from './area/book/resolvers/book';
+import { BookFieldsResolver } from './area/book/resolvers/bookFields';
+import { ClientResolver } from './area/client/resolvers/client';
+import { ClientFieldsResolver } from './area/client/resolvers/clientFields';
+import { BookResolver } from './area/book/resolvers/book';
+import { BookUsageResolver } from './area/book/resolvers/usage';
+import { BookUsageFieldsResolver } from './area/book/resolvers/usageFields';
+
 
 const app = express();
 const httpServer = new http.Server(app);
@@ -33,16 +35,17 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms', 
 }));
 
 const init = async (): Promise<void> => {
-  await dbWrapper.initialize('users');
+  await dbWrapper.initialize('clients');
   await dbWrapper.initialize('books');
 
   const schema = await buildSchema({
     resolvers: [
-      UserResolver,
-      UserAuthResolver,
-      UserCrudResolver,
+      ClientFieldsResolver,
+      ClientResolver,
+      BookFieldsResolver,
       BookResolver,
-      BookCRUDResolver,
+      BookUsageResolver,
+      BookUsageFieldsResolver,
     ]
   });
 

@@ -12,8 +12,8 @@ export class UpdateBookInput {
   descriptionFull?: string;
 
   @Field({ nullable: true })
-  author: string;
+  author?: string;
 
   @Field({ nullable: true })
-  yearWritten: number;
+  yearWritten?: number;
 }

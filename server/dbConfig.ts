@@ -1,10 +1,10 @@
-import { User } from './src/area/user/models/user';
+import { Client } from './src/area/client/models/client';
 import { ConnectionOptions } from 'typeorm';
 import { Book } from './src/area/book/models/book';
 import { BookUsage } from './src/area/book/models/usage';
 
 const schemas = [
-  'users',
+  'clients',
   'books',
 ] as const;
 
@@ -15,8 +15,8 @@ export interface DBConfigItem {
 }
 
 export const dbConfig: Partial<Record<DBSchema, DBConfigItem>> = {
-  users: {
-    entities: [User],
+  clients: {
+    entities: [Client],
   },
   books: {
     entities: [Book, BookUsage],

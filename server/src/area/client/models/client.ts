@@ -1,10 +1,10 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Book } from '../../book/models/book';
+import { BookUsage } from '../../book/models/usage';
 
 @Entity()
 @ObjectType()
-export class User extends BaseEntity {
+export class Client extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,9 +21,9 @@ export class User extends BaseEntity {
   @Column({ default: true })
   isActive: boolean;
 
-  @Field(() => [Book])
-  booksInProgress: [Book];
+  @Field(() => [BookUsage])
+  currentBookUsages: BookUsage[];
 
-  @Field(() => [Book])
-  booksCompleted: [Book];
+  @Field(() => [BookUsage])
+  completedBookUsages: BookUsage[];
 }
