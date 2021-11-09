@@ -22,11 +22,11 @@ export class Book extends BaseEntity {
   yearWritten: number;
 
   @Field(() => String)
-  @Column()
+  @Column({ name: 'description_short' })
   descriptionShort: string;
 
   @Field(() => String)
-  @Column()
+  @Column({ name: 'description_full' })
   descriptionFull: string;
 
   @Field(() => BookUsage, { nullable: true })

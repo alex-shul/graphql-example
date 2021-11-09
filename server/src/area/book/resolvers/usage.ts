@@ -1,6 +1,6 @@
 import { IsNull } from 'typeorm';
 import { dbWrapper } from '../../../shared/utils/dbWrapper';
-import { Arg, Mutation, Resolver } from 'type-graphql';
+import { Arg, ID, Mutation, Resolver } from 'type-graphql';
 import { Book } from '../models/book';
 import { BookUsage } from '../models/usage';
 import { Client } from '../../client/models/client';
@@ -8,7 +8,7 @@ import { Client } from '../../client/models/client';
 @Resolver()
 export class BookUsageResolver {
   @Mutation(() => BookUsage)
-  async giveBookToUser(@Arg('clientId') clientId: number, @Arg('bookId') bookId: number) {
+  async giveBookToUser(@Arg('clientId', () => ID) clientId: number, @Arg('bookId', () => ID) bookId: number) {
     const clientsEM = dbWrapper.getEntityManager('clients');
     const booksEM = dbWrapper.getEntityManager('books');
 
@@ -42,7 +42,7 @@ export class BookUsageResolver {
   }
 
   @Mutation(() => BookUsage)
-  async takeBookFromUser(@Arg('clientId') clientId: number, @Arg('bookId') bookId: number) {
+  async takeBookFromUser(@Arg('clientId', () => ID) clientId: number, @Arg('bookId', () => ID) bookId: number) {
     const clientsEM = dbWrapper.getEntityManager('clients');
     const booksEM = dbWrapper.getEntityManager('books');
 

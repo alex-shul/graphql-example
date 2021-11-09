@@ -462,7 +462,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "CreateUserInput",
+        "name": "CreateClientInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -530,7 +530,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "CreateUserInput",
+                    "name": "CreateClientInput",
                     "ofType": null
                   }
                 },

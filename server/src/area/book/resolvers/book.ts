@@ -1,5 +1,5 @@
 import { dbWrapper } from '../../../shared/utils/dbWrapper';
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, ID, Mutation, Query, Resolver } from 'type-graphql';
 import { CreateBookInput } from '../inputs/createBookInput';
 import { UpdateBookInput } from '../inputs/updateBookInput';
 import { Book } from '../models/book';
@@ -13,7 +13,7 @@ export class BookResolver {
   }
 
   @Query(() => Book)
-  book(@Arg('id') id: number) {
+  book(@Arg('id', () => ID) id: number) {
     const em = dbWrapper.getEntityManager('books');
     return em.findOne(Book, { where: { id } });
   }
@@ -27,7 +27,7 @@ export class BookResolver {
   }
 
   @Mutation(() => Book)
-  async updateBook(@Arg('id') id: string, @Arg('data') data: UpdateBookInput) {
+  async updateBook(@Arg('id', () => ID) id: string, @Arg('data') data: UpdateBookInput) {
     const em = dbWrapper.getEntityManager('books');
     const book = await em.findOne(Book, { where: { id } });
 
@@ -43,7 +43,7 @@ export class BookResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteBook(@Arg('id') id: string) {
+  async deleteBook(@Arg('id', () => ID) id: string) {
     const em = dbWrapper.getEntityManager('books');
     const book = await em.findOne(Book, { where: { id } });
 

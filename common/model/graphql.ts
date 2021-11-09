@@ -52,7 +52,7 @@ export type CreateBookInput = {
   descriptionFull: Scalars['String'];
 };
 
-export type CreateUserInput = {
+export type CreateClientInput = {
   name: Scalars['String'];
   surname: Scalars['String'];
 };
@@ -72,7 +72,7 @@ export type Mutation = {
 
 
 export type MutationAddClientArgs = {
-  data: CreateUserInput;
+  data: CreateClientInput;
 };
 
 
@@ -223,7 +223,7 @@ export type ResolversTypes = {
   Client: ResolverTypeWrapper<Client>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CreateBookInput: CreateBookInput;
-  CreateUserInput: CreateUserInput;
+  CreateClientInput: CreateClientInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -241,7 +241,7 @@ export type ResolversParentTypes = {
   Client: Client;
   Boolean: Scalars['Boolean'];
   CreateBookInput: CreateBookInput;
-  CreateUserInput: CreateUserInput;
+  CreateClientInput: CreateClientInput;
   DateTime: Scalars['DateTime'];
   Mutation: {};
   Query: {};

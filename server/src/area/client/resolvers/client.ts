@@ -1,8 +1,8 @@
 import { dbWrapper } from '../../../shared/utils/dbWrapper';
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, ID, Mutation, Query, Resolver } from 'type-graphql';
 import { Client } from '../models/client';
 import { UpdateClientInput } from '../inputs/updateClientInput';
-import { CreateUserInput } from '../inputs/createClientInput';
+import { CreateClientInput } from '../inputs/createClientInput';
 
 @Resolver()
 export class ClientResolver {
@@ -13,21 +13,21 @@ export class ClientResolver {
   }
 
   @Query(() => Client)
-  async client(@Arg('id') id: string): Promise<Client> {
+  async client(@Arg('id', () => ID) id: string): Promise<Client> {
     const em = dbWrapper.getEntityManager('clients');
     const client = await em.findOneOrFail(Client, { where: { id } });
     return client;
   }
 
   @Mutation(() => Client)
-  async addClient(@Arg('data') data: CreateUserInput) {
+  async addClient(@Arg('data') data: CreateClientInput) {
     const em = dbWrapper.getEntityManager('clients');
     const client = await em.save(Client, data);
     return client;
   }
 
   @Mutation(() => Client)
-  async updateClient(@Arg('id') id: string, @Arg('data') data: UpdateClientInput) {
+  async updateClient(@Arg('id', () => ID) id: string, @Arg('data') data: UpdateClientInput) {
     const em = dbWrapper.getEntityManager('clients');
     const client = await em.findOne(Client, { where: { id } });
 
@@ -43,7 +43,7 @@ export class ClientResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteClient(@Arg('id') id: string) {
+  async deleteClient(@Arg('id', () => ID) id: string) {
     const em = dbWrapper.getEntityManager('clients');
     const client = await em.findOne(Client, { where: { id } });
 
