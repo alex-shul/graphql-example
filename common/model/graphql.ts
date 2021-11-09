@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -11,15 +11,39 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
 };
 
 export type Book = {
   __typename?: 'Book';
   id: Scalars['ID'];
   title: Scalars['String'];
+  author: Scalars['String'];
+  yearWritten: Scalars['Float'];
   descriptionShort: Scalars['String'];
   descriptionFull: Scalars['String'];
-  usedBy?: Maybe<User>;
+  currentUsage?: Maybe<BookUsage>;
+  completedUsages: Array<BookUsage>;
+};
+
+export type BookUsage = {
+  __typename?: 'BookUsage';
+  id: Scalars['ID'];
+  book: Book;
+  client: Client;
+  startDate: Scalars['DateTime'];
+  endDate?: Maybe<Scalars['DateTime']>;
+};
+
+export type Client = {
+  __typename?: 'Client';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  surname: Scalars['String'];
+  isActive: Scalars['Boolean'];
+  currentBookUsages: Array<BookUsage>;
+  completedBookUsages: Array<BookUsage>;
 };
 
 export type CreateBookInput = {
@@ -33,29 +57,32 @@ export type CreateUserInput = {
   surname: Scalars['String'];
 };
 
+
 export type Mutation = {
   __typename?: 'Mutation';
-  signup: User;
-  updateUser: User;
-  deleteUser: Scalars['Boolean'];
+  addClient: Client;
+  updateClient: Client;
+  deleteClient: Scalars['Boolean'];
   createBook: Book;
   updateBook: Book;
   deleteBook: Scalars['Boolean'];
+  giveBookToUser: BookUsage;
+  takeBookFromUser: BookUsage;
 };
 
 
-export type MutationSignupArgs = {
+export type MutationAddClientArgs = {
   data: CreateUserInput;
 };
 
 
-export type MutationUpdateUserArgs = {
-  data: UpdateUserInput;
+export type MutationUpdateClientArgs = {
+  data: UpdateClientInput;
   id: Scalars['String'];
 };
 
 
-export type MutationDeleteUserArgs = {
+export type MutationDeleteClientArgs = {
   id: Scalars['String'];
 };
 
@@ -75,17 +102,29 @@ export type MutationDeleteBookArgs = {
   id: Scalars['String'];
 };
 
+
+export type MutationGiveBookToUserArgs = {
+  bookId: Scalars['Float'];
+  clientId: Scalars['Float'];
+};
+
+
+export type MutationTakeBookFromUserArgs = {
+  bookId: Scalars['Float'];
+  clientId: Scalars['Float'];
+};
+
 export type Query = {
   __typename?: 'Query';
-  users: Array<User>;
-  user: User;
+  clients: Array<Client>;
+  client: Client;
   books: Array<Book>;
   book: Book;
 };
 
 
-export type QueryUserArgs = {
-  id: Scalars['Float'];
+export type QueryClientArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -97,21 +136,14 @@ export type UpdateBookInput = {
   title?: Maybe<Scalars['String']>;
   descriptionShort?: Maybe<Scalars['String']>;
   descriptionFull?: Maybe<Scalars['String']>;
+  author?: Maybe<Scalars['String']>;
+  yearWritten?: Maybe<Scalars['Float']>;
 };
 
-export type UpdateUserInput = {
+export type UpdateClientInput = {
   name?: Maybe<Scalars['String']>;
   surname?: Maybe<Scalars['String']>;
   isActive?: Maybe<Scalars['Boolean']>;
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  surname: Scalars['String'];
-  isActive: Scalars['Boolean'];
-  books: Array<Book>;
 };
 
 
@@ -186,15 +218,17 @@ export type ResolversTypes = {
   Book: ResolverTypeWrapper<Book>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
+  BookUsage: ResolverTypeWrapper<BookUsage>;
+  Client: ResolverTypeWrapper<Client>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CreateBookInput: CreateBookInput;
   CreateUserInput: CreateUserInput;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Mutation: ResolverTypeWrapper<{}>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Query: ResolverTypeWrapper<{}>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   UpdateBookInput: UpdateBookInput;
-  UpdateUserInput: UpdateUserInput;
-  User: ResolverTypeWrapper<User>;
+  UpdateClientInput: UpdateClientInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -202,55 +236,78 @@ export type ResolversParentTypes = {
   Book: Book;
   ID: Scalars['ID'];
   String: Scalars['String'];
+  Float: Scalars['Float'];
+  BookUsage: BookUsage;
+  Client: Client;
+  Boolean: Scalars['Boolean'];
   CreateBookInput: CreateBookInput;
   CreateUserInput: CreateUserInput;
+  DateTime: Scalars['DateTime'];
   Mutation: {};
-  Boolean: Scalars['Boolean'];
   Query: {};
-  Float: Scalars['Float'];
   UpdateBookInput: UpdateBookInput;
-  UpdateUserInput: UpdateUserInput;
-  User: User;
+  UpdateClientInput: UpdateClientInput;
 };
 
 export type BookResolvers<ContextType = any, ParentType extends ResolversParentTypes['Book'] = ResolversParentTypes['Book']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  author?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  yearWritten?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   descriptionShort?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   descriptionFull?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  usedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  currentUsage?: Resolver<Maybe<ResolversTypes['BookUsage']>, ParentType, ContextType>;
+  completedUsages?: Resolver<Array<ResolversTypes['BookUsage']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  signup?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'data'>>;
-  updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data' | 'id'>>;
-  deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
-  createBook?: Resolver<ResolversTypes['Book'], ParentType, ContextType, RequireFields<MutationCreateBookArgs, 'data'>>;
-  updateBook?: Resolver<ResolversTypes['Book'], ParentType, ContextType, RequireFields<MutationUpdateBookArgs, 'data' | 'id'>>;
-  deleteBook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBookArgs, 'id'>>;
+export type BookUsageResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookUsage'] = ResolversParentTypes['BookUsage']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  book?: Resolver<ResolversTypes['Book'], ParentType, ContextType>;
+  client?: Resolver<ResolversTypes['Client'], ParentType, ContextType>;
+  startDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  endDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
-  books?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType>;
-  book?: Resolver<ResolversTypes['Book'], ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>;
-};
-
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type ClientResolvers<ContextType = any, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   surname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  books?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType>;
+  currentBookUsages?: Resolver<Array<ResolversTypes['BookUsage']>, ParentType, ContextType>;
+  completedBookUsages?: Resolver<Array<ResolversTypes['BookUsage']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  addClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationAddClientArgs, 'data'>>;
+  updateClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'data' | 'id'>>;
+  deleteClient?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
+  createBook?: Resolver<ResolversTypes['Book'], ParentType, ContextType, RequireFields<MutationCreateBookArgs, 'data'>>;
+  updateBook?: Resolver<ResolversTypes['Book'], ParentType, ContextType, RequireFields<MutationUpdateBookArgs, 'data' | 'id'>>;
+  deleteBook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBookArgs, 'id'>>;
+  giveBookToUser?: Resolver<ResolversTypes['BookUsage'], ParentType, ContextType, RequireFields<MutationGiveBookToUserArgs, 'bookId' | 'clientId'>>;
+  takeBookFromUser?: Resolver<ResolversTypes['BookUsage'], ParentType, ContextType, RequireFields<MutationTakeBookFromUserArgs, 'bookId' | 'clientId'>>;
+};
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  clients?: Resolver<Array<ResolversTypes['Client']>, ParentType, ContextType>;
+  client?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<QueryClientArgs, 'id'>>;
+  books?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType>;
+  book?: Resolver<ResolversTypes['Book'], ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>;
 };
 
 export type Resolvers<ContextType = any> = {
   Book?: BookResolvers<ContextType>;
+  BookUsage?: BookUsageResolvers<ContextType>;
+  Client?: ClientResolvers<ContextType>;
+  DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
 };
 
